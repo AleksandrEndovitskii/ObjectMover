@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using UnityEngine;
 
 namespace Managers
@@ -14,9 +15,12 @@ namespace Managers
         private GameObject _mainGameObjectPrefab;
         [SerializeField]
         private List<Vector3> _targetPoints = new List<Vector3>();
+        private List<Vector3> _tempTargetPoints = new List<Vector3>();
+        private float _mainGameObjectMovementDuration = 1f;
 
         private List<GameObject> _gameObjectInstances = new List<GameObject>();
         private GameObject _mainGameObjectInstance;
+        private readonly Vector3 MainGameObjectInitialPosition = new Vector3(0, 0, 0);
 
         private const int GAME_OBJECTS_RANDOM_POSITION_X_MIN = -10;
         private const int GAME_OBJECTS_RANDOM_POSITION_X_MAX = 10;
@@ -24,8 +28,6 @@ namespace Managers
         private const int GAME_OBJECTS_RANDOM_POSITION_Y_MAX = 0;
         private const int GAME_OBJECTS_RANDOM_POSITION_Z_MIN = -10;
         private const int GAME_OBJECTS_RANDOM_POSITION_Z_MAX = 10;
-
-        private readonly Vector3 MainGameObjectPosition = new Vector3(0, 0, 0);
 
         public override void Initialize()
         {
@@ -36,7 +38,7 @@ namespace Managers
                     GAME_OBJECTS_RANDOM_POSITION_Y_MIN,GAME_OBJECTS_RANDOM_POSITION_Y_MAX,
                     GAME_OBJECTS_RANDOM_POSITION_Z_MIN, GAME_OBJECTS_RANDOM_POSITION_Z_MAX);
                 while (_gameObjectInstances.Any(go => go.transform.position == randomPosition) ||
-                       randomPosition == MainGameObjectPosition)
+                       randomPosition == MainGameObjectInitialPosition)
                 {
                     randomPosition = GetRandomPosition(
                         GAME_OBJECTS_RANDOM_POSITION_X_MIN, GAME_OBJECTS_RANDOM_POSITION_X_MAX,
@@ -47,7 +49,20 @@ namespace Managers
                 _gameObjectInstances.Add(gameObjectInstance);
             }
 
-            _mainGameObjectInstance = Instantiate(_mainGameObjectPrefab, MainGameObjectPosition, Quaternion.identity);
+            _mainGameObjectInstance = Instantiate(_mainGameObjectPrefab, MainGameObjectInitialPosition, Quaternion.identity);
+
+            _tempTargetPoints = new List<Vector3>(_targetPoints);
+            TryMoveToNextTargetPoint();
+        }
+        public override void UnInitialize()
+        {
+        }
+
+        public override void Subscribe()
+        {
+        }
+        public override void UnSubscribe()
+        {
         }
 
         private static Vector3 GetRandomPosition(int randomPositionXMin, int randomPositionXMax,
@@ -61,15 +76,18 @@ namespace Managers
             return randomPosition;
         }
 
-        public override void UnInitialize()
+        private void TryMoveToNextTargetPoint()
         {
-        }
+            if (!_tempTargetPoints.Any())
+            {
+                return;
+            }
 
-        public override void Subscribe()
-        {
-        }
-        public override void UnSubscribe()
-        {
+            var targetPoint = _tempTargetPoints.FirstOrDefault();
+            _tempTargetPoints.Remove(targetPoint);
+            var doLocalMove = _mainGameObjectInstance.transform.DOLocalMove(
+                targetPoint, _mainGameObjectMovementDuration);
+            doLocalMove.OnComplete(TryMoveToNextTargetPoint);
         }
     }
 }
