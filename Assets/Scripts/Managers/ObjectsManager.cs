@@ -14,8 +14,8 @@ namespace Managers
 
         private const int GAME_OBJECTS_RANDOM_POSITION_X_MIN = -10;
         private const int GAME_OBJECTS_RANDOM_POSITION_X_MAX = 10;
-        private const int GAME_OBJECTS_RANDOM_POSITION_Y_MIN = -10;
-        private const int GAME_OBJECTS_RANDOM_POSITION_Y_MAX = 10;
+        private const int GAME_OBJECTS_RANDOM_POSITION_Y_MIN = 0;
+        private const int GAME_OBJECTS_RANDOM_POSITION_Y_MAX = 0;
         private const int GAME_OBJECTS_RANDOM_POSITION_Z_MIN = -10;
         private const int GAME_OBJECTS_RANDOM_POSITION_Z_MAX = 10;
 
