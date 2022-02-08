@@ -31,27 +31,11 @@ namespace Managers
 
         public override void Initialize()
         {
-            for (var i = 0; i < _gameObjectInstancesCount; i++)
-            {
-                var randomPosition = GetRandomPosition(
-                    GAME_OBJECTS_RANDOM_POSITION_X_MIN, GAME_OBJECTS_RANDOM_POSITION_X_MAX,
-                    GAME_OBJECTS_RANDOM_POSITION_Y_MIN,GAME_OBJECTS_RANDOM_POSITION_Y_MAX,
-                    GAME_OBJECTS_RANDOM_POSITION_Z_MIN, GAME_OBJECTS_RANDOM_POSITION_Z_MAX);
-                while (_gameObjectInstances.Any(go => go.transform.position == randomPosition) ||
-                       randomPosition == MainGameObjectInitialPosition)
-                {
-                    randomPosition = GetRandomPosition(
-                        GAME_OBJECTS_RANDOM_POSITION_X_MIN, GAME_OBJECTS_RANDOM_POSITION_X_MAX,
-                        GAME_OBJECTS_RANDOM_POSITION_Y_MIN, GAME_OBJECTS_RANDOM_POSITION_Y_MAX,
-                        GAME_OBJECTS_RANDOM_POSITION_Z_MIN, GAME_OBJECTS_RANDOM_POSITION_Z_MAX);
-                }
-                var gameObjectInstance = Instantiate(_gameObjectPrefab, randomPosition, Quaternion.identity);
-                _gameObjectInstances.Add(gameObjectInstance);
-            }
+            InstantiateGameObjects();
 
-            _mainGameObjectInstance = Instantiate(_mainGameObjectPrefab, MainGameObjectInitialPosition, Quaternion.identity);
+            InstantiateMainGameObject();
 
-            _tempTargetPoints = new List<Vector3>(_targetPoints);
+            _tempTargetPoints = new List<Vector3>(_targetPoints); // will be used in TryMoveToNextTargetPoint
             TryMoveToNextTargetPoint();
         }
         public override void UnInitialize()
@@ -65,15 +49,31 @@ namespace Managers
         {
         }
 
-        private static Vector3 GetRandomPosition(int randomPositionXMin, int randomPositionXMax,
-            int randomPositionYMin, int randomPositionYMax,
-            int randomPositionZMin, int randomPositionZMax)
+        private void InstantiateGameObjects()
         {
-            var randomPositionX = Random.Range(randomPositionXMin, randomPositionXMax);
-            var randomPositionY = Random.Range(randomPositionYMin, randomPositionYMax);
-            var randomPositionZ = Random.Range(randomPositionZMin, randomPositionZMax);
-            var randomPosition = new Vector3(randomPositionX, randomPositionY, randomPositionZ);
-            return randomPosition;
+            for (var i = 0; i < _gameObjectInstancesCount; i++)
+            {
+                var randomPosition = GetRandomPosition(
+                    GAME_OBJECTS_RANDOM_POSITION_X_MIN, GAME_OBJECTS_RANDOM_POSITION_X_MAX,
+                    GAME_OBJECTS_RANDOM_POSITION_Y_MIN, GAME_OBJECTS_RANDOM_POSITION_Y_MAX,
+                    GAME_OBJECTS_RANDOM_POSITION_Z_MIN, GAME_OBJECTS_RANDOM_POSITION_Z_MAX);
+                while (_gameObjectInstances.Any(go => go.transform.position == randomPosition) ||
+                       randomPosition == MainGameObjectInitialPosition)
+                {
+                    randomPosition = GetRandomPosition(
+                        GAME_OBJECTS_RANDOM_POSITION_X_MIN, GAME_OBJECTS_RANDOM_POSITION_X_MAX,
+                        GAME_OBJECTS_RANDOM_POSITION_Y_MIN, GAME_OBJECTS_RANDOM_POSITION_Y_MAX,
+                        GAME_OBJECTS_RANDOM_POSITION_Z_MIN, GAME_OBJECTS_RANDOM_POSITION_Z_MAX);
+                }
+
+                var gameObjectInstance = Instantiate(_gameObjectPrefab, randomPosition, Quaternion.identity);
+                _gameObjectInstances.Add(gameObjectInstance);
+            }
+        }
+
+        private void InstantiateMainGameObject()
+        {
+            _mainGameObjectInstance = Instantiate(_mainGameObjectPrefab, MainGameObjectInitialPosition, Quaternion.identity);
         }
 
         private void TryMoveToNextTargetPoint()
@@ -88,6 +88,17 @@ namespace Managers
             var doLocalMove = _mainGameObjectInstance.transform.DOLocalMove(
                 targetPoint, _mainGameObjectMovementDuration);
             doLocalMove.OnComplete(TryMoveToNextTargetPoint);
+        }
+
+        private static Vector3 GetRandomPosition(int randomPositionXMin, int randomPositionXMax,
+            int randomPositionYMin, int randomPositionYMax,
+            int randomPositionZMin, int randomPositionZMax)
+        {
+            var randomPositionX = Random.Range(randomPositionXMin, randomPositionXMax);
+            var randomPositionY = Random.Range(randomPositionYMin, randomPositionYMax);
+            var randomPositionZ = Random.Range(randomPositionZMin, randomPositionZMax);
+            var randomPosition = new Vector3(randomPositionX, randomPositionY, randomPositionZ);
+            return randomPosition;
         }
     }
 }
