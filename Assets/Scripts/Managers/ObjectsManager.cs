@@ -12,6 +12,8 @@ namespace Managers
         private int _gameObjectInstancesCount;
         [SerializeField]
         private GameObject _mainGameObjectPrefab;
+        [SerializeField]
+        private List<Vector3> _targetPoints = new List<Vector3>();
 
         private List<GameObject> _gameObjectInstances = new List<GameObject>();
         private GameObject _mainGameObjectInstance;
@@ -33,7 +35,8 @@ namespace Managers
                     GAME_OBJECTS_RANDOM_POSITION_X_MIN, GAME_OBJECTS_RANDOM_POSITION_X_MAX,
                     GAME_OBJECTS_RANDOM_POSITION_Y_MIN,GAME_OBJECTS_RANDOM_POSITION_Y_MAX,
                     GAME_OBJECTS_RANDOM_POSITION_Z_MIN, GAME_OBJECTS_RANDOM_POSITION_Z_MAX);
-                while (_gameObjectInstances.Any(go => go.transform.position == randomPosition))
+                while (_gameObjectInstances.Any(go => go.transform.position == randomPosition) ||
+                       randomPosition == MainGameObjectPosition)
                 {
                     randomPosition = GetRandomPosition(
                         GAME_OBJECTS_RANDOM_POSITION_X_MIN, GAME_OBJECTS_RANDOM_POSITION_X_MAX,
