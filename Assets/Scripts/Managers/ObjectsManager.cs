@@ -10,8 +10,11 @@ namespace Managers
         private GameObject _gameObjectPrefab;
         [SerializeField]
         private int _gameObjectInstancesCount;
+        [SerializeField]
+        private GameObject _mainGameObjectPrefab;
 
         private List<GameObject> _gameObjectInstances = new List<GameObject>();
+        private GameObject _mainGameObjectInstance;
 
         private const int GAME_OBJECTS_RANDOM_POSITION_X_MIN = -10;
         private const int GAME_OBJECTS_RANDOM_POSITION_X_MAX = 10;
@@ -19,6 +22,8 @@ namespace Managers
         private const int GAME_OBJECTS_RANDOM_POSITION_Y_MAX = 0;
         private const int GAME_OBJECTS_RANDOM_POSITION_Z_MIN = -10;
         private const int GAME_OBJECTS_RANDOM_POSITION_Z_MAX = 10;
+
+        private readonly Vector3 MainGameObjectPosition = new Vector3(0, 0, 0);
 
         public override void Initialize()
         {
@@ -38,6 +43,8 @@ namespace Managers
                 var gameObjectInstance = Instantiate(_gameObjectPrefab, randomPosition, Quaternion.identity);
                 _gameObjectInstances.Add(gameObjectInstance);
             }
+
+            _mainGameObjectInstance = Instantiate(_mainGameObjectPrefab, MainGameObjectPosition, Quaternion.identity);
         }
 
         private static Vector3 GetRandomPosition(int randomPositionXMin, int randomPositionXMax,
