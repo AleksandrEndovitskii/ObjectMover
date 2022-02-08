@@ -80,6 +80,11 @@ namespace Managers
         {
             if (!_tempTargetPoints.Any())
             {
+                if (ExplosionManager.Instance != null)
+                {
+                    ExplosionManager.Instance.Explode(_mainGameObjectInstance);
+                }
+
                 return;
             }
 
