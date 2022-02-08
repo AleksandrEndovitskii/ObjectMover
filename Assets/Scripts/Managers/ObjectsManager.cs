@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Managers
@@ -27,6 +28,13 @@ namespace Managers
                     GAME_OBJECTS_RANDOM_POSITION_X_MIN, GAME_OBJECTS_RANDOM_POSITION_X_MAX,
                     GAME_OBJECTS_RANDOM_POSITION_Y_MIN,GAME_OBJECTS_RANDOM_POSITION_Y_MAX,
                     GAME_OBJECTS_RANDOM_POSITION_Z_MIN, GAME_OBJECTS_RANDOM_POSITION_Z_MAX);
+                while (_gameObjectInstances.Any(go => go.transform.position == randomPosition))
+                {
+                    randomPosition = GetRandomPosition(
+                        GAME_OBJECTS_RANDOM_POSITION_X_MIN, GAME_OBJECTS_RANDOM_POSITION_X_MAX,
+                        GAME_OBJECTS_RANDOM_POSITION_Y_MIN, GAME_OBJECTS_RANDOM_POSITION_Y_MAX,
+                        GAME_OBJECTS_RANDOM_POSITION_Z_MIN, GAME_OBJECTS_RANDOM_POSITION_Z_MAX);
+                }
                 var gameObjectInstance = Instantiate(_gameObjectPrefab, randomPosition, Quaternion.identity);
                 _gameObjectInstances.Add(gameObjectInstance);
             }
